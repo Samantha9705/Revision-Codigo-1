@@ -1,22 +1,34 @@
 const baseEndpoint = 'https://api.github.com';
 const usersEndpoint = `${baseEndpoint}/users`;
-const $n = document.querySelector('name');
-const $b = document.querySelector('#blog');
-const $l = document.querySelector('.location');
 
-function displayUser(username) {
-  $n.textContent = 'cargando...';
-  const response = await fetch(`${usersEndpoint}/${username}`);
-  console.log(data);
-  $n.textContent = '${data.name}';
-  $b.textContent = '${data.blog}';
-  $l.textContent = '${data.location}';
+// Suponiendo que el HTML tiene estos IDs o clases correctamente definidos
+const txtname = document.querySelector('#name');
+const blog = document.querySelector('#blog');
+const location = document.querySelector('.location');
+
+async function displayUser(username) {
+  txtname.textContent = 'Cargando...';
+
+  try {
+    const response = await fetch(`${usersEndpoint}/${username}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+
+    txtname.textContent = data.name || 'Nombre no disponible';
+    blog.textContent = data.blog || 'Blog no disponible';
+    location.textContent = data.location || 'Ubicación no disponible';
+  } catch (err) {
+    handleError(err);
+  }
 }
 
 function handleError(err) {
-  console.log('OH NO!');
+  console.log('¡OH NO!');
   console.log(err);
-  n.textContent = `Algo salió mal: ${err}`
+  txtname.textContent = `Algo salió mal: ${err.message}`;
 }
 
-displayUser('stolinski').catch(handleError);
+// Llamada a la función
+displayUser('stolinski');
